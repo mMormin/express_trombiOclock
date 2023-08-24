@@ -3,8 +3,8 @@ DROP TABLE IF EXISTS "promo";
 
 CREATE TABLE IF NOT EXISTS "promo" (
   "id" INT NOT NULL PRIMARY KEY,
-  "name" TEXT,
-  "github_organization" TEXT
+  "name" VARCHAR(128),
+  "github_organization" VARCHAR(255)
 );
 
 INSERT INTO "promo" ("id", "name", "github_organization") VALUES 
