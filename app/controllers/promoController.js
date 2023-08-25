@@ -1,25 +1,45 @@
-const promos = require("../docs/data/promos.json");
+//const promos = require("../docs/data/promos.json");
+
+require("../db.js");
+
+const promos = "SELECT * FROM promo;";
 
 const promoController = {
-  homePage: (req, res) => {
+  homePage: (res) => {
     res.render("index");
   },
-  promosListPage: (req, res) => {
-    res.render("promosList", { promos });
+  promosListPage: (res) => {
+    client
+      .query(promos)
+      .then((data) => {
+        res.render("promosList", { promos: data });
+        client.end();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   promoPage: (req, res, next) => {
-    const { id } = req.params;
-    const promo = promos.find((promo) => promo.id === Number(id));
+    client
+      .query(promos)
+      .then((data) => {
+        const { id } = req.params;
+        const promo = data.find((promo) => promo.id === Number(id));
 
-    if (!promo) {
-      res.locals.error = {
-        code: 404,
-        message: "Aucune promo correspondante !",
-      };
-      return next();
-    }
-
-    return res.render("promo", { promo });
+        if (!promo) {
+          res.locals.error = {
+            code: 404,
+            message: "Aucune promo correspondante !",
+          };
+          return next();
+        }
+        
+        res.render("promo", { promo });
+        client.end();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
 };
 
