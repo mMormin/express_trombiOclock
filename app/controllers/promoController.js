@@ -1,44 +1,40 @@
 //const promos = require("../docs/data/promos.json");
 
-require("../db.js");
-
-const promos = "SELECT * FROM promo;";
+const db = require("../db.js");
 
 const promoController = {
   homePage: (res) => {
     res.render("index");
   },
-  promosListPage: (res) => {
-    client
-      .query(promos)
-      .then((data) => {
-        res.render("promosList", { promos: data });
-        client.end();
+  promosListPage: (res, next) => {
+    const query = "SELECT * FROM promo ORDER BY name ASC;"
+    db.query(query)
+      .then((result) => {
+        const promos = result.rows;
+        res.render("promosList", { promos });
       })
       .catch((error) => {
-        console.log(error);
+        res.locals.error = { code: 404, message: error };
+        return next();
       });
   },
   promoPage: (req, res, next) => {
-    client
-      .query(promos)
-      .then((data) => {
-        const { id } = req.params;
-        const promo = data.find((promo) => promo.id === Number(id));
+    const { id } = req.params;
 
-        if (!promo) {
-          res.locals.error = {
-            code: 404,
-            message: "Aucune promo correspondante !",
-          };
-          return next();
-        }
-        
-        res.render("promo", { promo });
-        client.end();
+    const query = {
+      text: "SELECT * FROM promo WHERE id = $1",
+      values: [reqId],
+    };
+
+    db.query(query)
+      .then((result) => {
+        console.log(result);
+        const promo = result.rows[0];
+        return res.render("promo", { promo });
       })
       .catch((error) => {
-        console.log(error);
+        res.locals.error = { code: 404, message: error };
+        return next();
       });
   },
 };

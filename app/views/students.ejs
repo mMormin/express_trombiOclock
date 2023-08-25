@@ -1,4 +1,4 @@
-<%- include('partials/header') %> <% if (studentList === undefined) { %>
+<%- include('partials/header') %> <% if (students === undefined) { %>
 
 <p>Aucun éléve trouvé !</p>
 <a href="/promo/<%= promo.name %>/<%= promo.id %>"> Retour </a>
@@ -7,7 +7,7 @@
 
 <h1>Liste des étudiants de la promo : <%= promo.name %></h1>
 <ul class="cards">
-  <% for (const student of studentList) { %>
+  <% for (const student of students) { %>
   <li class="card">
     <a href="student.html">
       <figure>

@@ -1,10 +1,7 @@
 //const promos = require("../../docs/data/promos.json");
 //const students = require("../../docs/data/students.json");
 
-require("../db.js");
-
-const promos = "SELECT * FROM promo;";
-const students = "SELECT * FROM student;";
+const db = require("../db.js");
 
 const studentController = {
   studentsByPromoPage: (req, res, next) => {
@@ -30,15 +27,19 @@ const studentController = {
       return next();
     }
 
-    return res.render("students", { studentList, promo });
+    return res.render("students", { students: studentList, promo });
   },
 
   getPromoById: (promoId) => {
-    client
-      .query(promos)
-      .then((data) => {
-        const promoData = data.find((promo) => promo.id === promoId);
-        return promoData;
+    const query = {
+      text: "SELECT * FROM promo WHERE id = $1",
+      values: [promoId],
+    };
+
+    db.query(query)
+      .then((result) => {
+        const promo = result.rows[0]
+        return promo;
       })
       .catch((error) => {
         console.log(error);
@@ -46,13 +47,15 @@ const studentController = {
   },
 
   getStudentsByPromo: (promoId) => {
-    client
-      .query(students)
-      .then((data) => {
-        const Studentsdata = data.filter(
-          (student) => student.promo === promoId
-        );
-        return Studentsdata;
+    const query = {
+      text: "SELECT * FROM student WHERE promo = $1 ORDER BY first_name ASC",
+      values: [promoId],
+    };
+
+    db.query(query)
+      .then((result) => {
+        const students = result.rows;
+        return students;
       })
       .catch((error) => {
         console.log(error);
