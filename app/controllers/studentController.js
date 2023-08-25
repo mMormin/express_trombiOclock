@@ -7,38 +7,44 @@ const studentController = {
   studentsByPromoPage: (req, res, next) => {
     const { id } = req.params;
     const promoId = Number(id);
-    const promo = studentController.getPromoById(promoId);
+    studentController.getPromoById(promoId).then((promo) => {
+      studentController.getStudentsByPromo(promoId).then((students) => {
+        res.render("students", { students, promo });
+      })
 
-    if (!promo) {
-      res.locals.error = {
-        code: 404,
-        message: "Aucune promo correspondante !",
-      };
-      return next();
-    }
+      
+    });
 
-    const studentList = studentController.getStudentsByPromo(promoId);
+    // if (!promo) {
+    //   res.locals.error = {
+    //     code: 404,
+    //     message: "Aucune promo correspondante !",
+    //   };
+    //   return next();
+    // }
 
-    if (!studentList.length) {
-      res.locals.error = {
-        code: 404,
-        message: "Aucune promo correspondante !",
-      };
-      return next();
-    }
 
-    return res.render("students", { students: studentList, promo });
+    // if (!studentList.length) {
+    //   res.locals.error = {
+    //     code: 404,
+    //     message: "Aucune éléve trouvé !",
+    //   };
+    //   return next();
+    // }
   },
 
   getPromoById: (promoId) => {
+    let promo;
+
     const query = {
       text: "SELECT * FROM promo WHERE id = $1",
       values: [promoId],
     };
 
-    db.query(query)
+    return db
+      .query(query)
       .then((result) => {
-        const promo = result.rows[0]
+        promo = result.rows[0];
         return promo;
       })
       .catch((error) => {
@@ -48,11 +54,11 @@ const studentController = {
 
   getStudentsByPromo: (promoId) => {
     const query = {
-      text: "SELECT * FROM student WHERE promo = $1 ORDER BY first_name ASC",
+      text: "SELECT * FROM student WHERE promo_id = $1 ORDER BY first_name ASC",
       values: [promoId],
     };
 
-    db.query(query)
+    return db.query(query)
       .then((result) => {
         const students = result.rows;
         return students;

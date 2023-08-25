@@ -3,10 +3,10 @@
 const db = require("../db.js");
 
 const promoController = {
-  homePage: (res) => {
+  homePage: (req, res) => {
     res.render("index");
   },
-  promosListPage: (res, next) => {
+  promosListPage: (req, res, next) => {
     const query = "SELECT * FROM promo ORDER BY name ASC;"
     db.query(query)
       .then((result) => {
@@ -15,7 +15,7 @@ const promoController = {
       })
       .catch((error) => {
         res.locals.error = { code: 404, message: error };
-        return next();
+        next();
       });
   },
   promoPage: (req, res, next) => {
@@ -23,18 +23,17 @@ const promoController = {
 
     const query = {
       text: "SELECT * FROM promo WHERE id = $1",
-      values: [reqId],
+      values: [id],
     };
 
     db.query(query)
       .then((result) => {
-        console.log(result);
         const promo = result.rows[0];
-        return res.render("promo", { promo });
+        res.render("promo", { promo });
       })
       .catch((error) => {
         res.locals.error = { code: 404, message: error };
-        return next();
+        next();
       });
   },
 };
