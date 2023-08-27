@@ -4,6 +4,7 @@ const promoController = {
   homePage: (res) => {
     res.render("index");
   },
+
   promosListPage: async (res, next) => {
     const query = "SELECT * FROM promo ORDER BY name ASC;";
 
@@ -17,6 +18,7 @@ const promoController = {
       return next();
     }
   },
+
   promoPage: async (req, res, next) => {
     const { id } = req.params;
 

@@ -26,7 +26,6 @@ const studentController = {
       return next();
     }
   },
-  
 
   getPromoById: async (promoId) => {
     const query = {
