@@ -27,4 +27,6 @@
 
 ### Étape 11: Amélioration de toutes les Promises en async/await
 
-### Étape 12: Déploiement de la page Student _(/promo/:name/:id/students/:id)_ et du controller de data
+### Étape 12: Déploiement de la page Student _(/promo/:name/:id/students/:id)_ et du mapper de data
+
+### Étape 13: Traitement d'ajout d'étudiant _(pages admin + controllers + models)_
