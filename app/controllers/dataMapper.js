@@ -57,6 +57,18 @@ const dataMapper = {
 
     return result.rows[0];
   },
+
+  postStudent: async (values) => {
+    const query =
+      "INSERT INTO student (first_name, last_name, github_username, promo) VALUES ?";
+
+    const result = await db.query(query, [values]);
+
+    if (!result) {
+      throw new Error("L'étudiant n'a pas pu être ajouté !");
+    }
+
+  },
 };
 
 module.exports = dataMapper;
