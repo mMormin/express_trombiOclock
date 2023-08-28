@@ -1,15 +1,13 @@
-const db = require("../db.js");
+const dataMapper = require("./dataMapper.js");
 
 const promoController = {
-  homePage: (res) => {
+  homePage: (req, res) => {
     res.render("index");
   },
 
-  promosListPage: async (res, next) => {
-    const query = "SELECT * FROM promo ORDER BY name ASC;";
-
+  promosListPage: async (req, res, next) => {
     try {
-      const promos = await db.query(query).rows;
+      const promos = await dataMapper.getAllPromos();
 
       res.render("promosList", { promos });
     } catch (error) {
@@ -22,13 +20,8 @@ const promoController = {
   promoPage: async (req, res, next) => {
     const { id } = req.params;
 
-    const query = {
-      text: "SELECT * FROM promo WHERE id = $1",
-      values: [id],
-    };
-
     try {
-      const promo = await db.query(query).rows[0];
+      const promo = await dataMapper.getPromoById(id);
 
       res.render("promo", { promo });
     } catch (error) {

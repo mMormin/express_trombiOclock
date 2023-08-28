@@ -8,6 +8,7 @@ router.get("/", promoController.homePage);
 router.get("/promos", promoController.promosListPage);
 router.get("/promo/:name/:id", promoController.promoPage);
 router.get("/promo/:name/:id/students", studentController.studentsByPromoPage);
+router.get("/promo/:name/:id/students/:id", studentController.studentPage);
 
 router.use("*", (req, res) => {
   res.render("404");

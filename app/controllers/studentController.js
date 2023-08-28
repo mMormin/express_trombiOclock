@@ -1,21 +1,22 @@
 const db = require("../db.js");
 
+const dataMapper = require("./dataMapper.js");
+
 const studentController = {
   studentsByPromoPage: async (req, res, next) => {
     const { id } = req.params;
     const promoId = Number(id);
 
-    const promoIdPromise = studentController.getPromoById(promoId);
-    const studentsByPromoPromise = studentController.getPromoById(promoId);
-    const promises = [promoIdPromise, studentsByPromoPromise];
+    const getPromoByIdPromise = dataMapper.getPromoById(promoId);
+    const getStudentsByPromoPromise = dataMapper.getStudentsByPromo(promoId);
+    const promises = [getPromoByIdPromise, getStudentsByPromoPromise];
 
     try {
       const results = await Promise.allSettled(promises);
 
       // Destructuring
-      const [{value:promo}, {value: students}] = results;
-
-      // À l'ancienne le couz
+      const [{ value: promo }, { value: students }] = results;
+      // &&|| À l'ancienne le couz
       // const promo = results[0].value;
       // const students = results[1].value;
 
@@ -26,34 +27,21 @@ const studentController = {
       return next();
     }
   },
+  studentPage: async (req, res, next) => {
+    const { id } = req.params;
 
-  getPromoById: async (promoId) => {
-    const query = {
-      text: "SELECT * FROM promo WHERE id = $1",
-      values: [promoId],
-    };
-
+    const getStudentByIdPromise = dataMapper.getStudentById(id);
+    const getPromoByIdPromise = dataMapper.getPromoById(id);
+    const promises = [getStudentByIdPromise, getPromoByIdPromise];
+    
     try {
-      const result = await db.query(query);
+      const results = await Promise.allSettled(promises);
+      const [{ value: student }, { value: promo }] = results;
 
-      return result.rows[0];
+      res.render("student", { student, promo });
+      
     } catch (error) {
-      console.log(error);
-    }
-  },
-
-  getStudentsByPromo: async (promoId) => {
-    const query = {
-      text: "SELECT * FROM student WHERE promo_id = $1 ORDER BY first_name ASC",
-      values: [promoId],
-    };
-
-    try {
-      const result = await db.query(query);
-
-      return result.rows;
-    } catch (error) {
-      console.log(error);
+      res.locals.error = { code: 404, message: error };
     }
   },
 };

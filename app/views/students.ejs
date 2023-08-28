@@ -1,18 +1,15 @@
-<%- include('partials/header') %> <% if (students === undefined) { %>
-
-<p>Aucun éléve trouvé !</p>
-<a href="/promo/<%= promo.name %>/<%= promo.id %>"> Retour </a>
-
-<% } else { %>
+<%- include('partials/header') %>
 
 <h1>Liste des étudiants de la promo : <%= promo.name %></h1>
 <ul class="cards">
   <% for (const student of students) { %>
   <li class="card">
-    <a href="student.html">
+    <a href="/promo/<%= promo.name %>/<%= promo.id %>/students/<%= student.id %>">
       <figure>
         <img src="<%= student.profile_picture_url %>" alt="" />
-        <figcaption><%= student.first_name %> <%= student.last_name %></figcaption>
+        <figcaption>
+          <%= student.first_name %> <%= student.last_name %>
+        </figcaption>
       </figure>
     </a>
   </li>
@@ -29,4 +26,4 @@
   </ul>
 </nav>
 
-<% } %> <%- include('partials/footer') %>
+<%- include('partials/footer') %>
